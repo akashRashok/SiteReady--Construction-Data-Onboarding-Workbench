@@ -1,0 +1,64 @@
+%PDF-1.4
+1 0 obj<< /Type /Catalog /Pages 2 0 R >>endobj
+2 0 obj<< /Type /Pages /Kids [3 0 R] /Count 1 >>endobj
+3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>endobj
+4 0 obj<< /Length 1443 >>stream
+BT
+/F1 10 Tf
+50 780 Td
+14 TL
+(SAFE WORK METHOD STATEMENT) Tj
+T* (SWMS Number: SWMS-2024-0142) Tj
+T* (Document Title: Roof Sheeting Working at Heights) Tj
+T* (Contractor Name: Apex Build Pty Ltd) Tj
+T* (Contractor ABN: 51 824 753 556) Tj
+T* (Project Name: Riverside Warehouse Roof Replacement) Tj
+T* (Site Address: 42 Harbour Road, Newcastle NSW 2300) Tj
+T* (Activity: Installation of metal roof sheeting at height) Tj
+T* (Date Prepared: 2024-03-12) Tj
+T* (Review Date: 2025-03-12) Tj
+T* (Responsible Person: Sarah Chen) Tj
+T* () Tj
+T* (High Risk Categories:) Tj
+T* (- Working at heights) Tj
+T* (- Use of mobile plant) Tj
+T* (- Risk of falling objects) Tj
+T* () Tj
+T* (PPE Required:) Tj
+T* (- Hard hat) Tj
+T* (- Safety harness) Tj
+T* (- Non-slip footwear) Tj
+T* (- Cut-resistant gloves) Tj
+T* () Tj
+T* (Plant and Equipment:) Tj
+T* (- Scissor lift) Tj
+T* (- Edge protection) Tj
+T* (- Screw gun) Tj
+T* () Tj
+T* (Required Competencies / Licences:) Tj
+T* (- White Card) Tj
+T* (- Working at Heights) Tj
+T* (- EWP licence) Tj
+T* () Tj
+T* (Job Steps:) Tj
+T* (Step | Hazard | Risk | Control) Tj
+T* (1. Site setup | Uneven ground | Medium | Inspect and barricade work area) Tj
+T* (2. Install edge protection | Fall from height | High | Certified edge protection before work) Tj
+T* (3. Lift sheets | Falling objects | High | Exclusion zone and tagged lifting gear) Tj
+T* (4. Fix sheeting | Cuts and falls | High | Harness, gloves, sequenced fixing) Tj
+ET
+endstream
+endobj
+5 0 obj<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000111 00000 n 
+0000000235 00000 n 
+0000001728 00000 n 
+trailer<< /Size 6 /Root 1 0 R >>
+startxref
+1796
+%%EOF
