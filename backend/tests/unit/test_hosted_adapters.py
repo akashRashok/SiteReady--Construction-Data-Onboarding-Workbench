@@ -31,7 +31,7 @@ def _run() -> ImportRun:
         id="r1",
         name="Demo",
         status=RunStatus.REVIEW_PENDING,
-        reference_date=date(2025, 6, 15),
+        reference_date=date(2026, 7, 15),
         created_at=now,
         updated_at=now,
         llm_provider="openai",

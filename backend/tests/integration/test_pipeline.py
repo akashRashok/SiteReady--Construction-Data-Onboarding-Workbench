@@ -38,18 +38,18 @@ def service(tmp_path: Path, project_root: Path) -> WorkbenchService:
 
 
 def test_create_and_get_run(service: WorkbenchService):
-    run = service.create_run("Test Run", date(2025, 6, 15))
+    run = service.create_run("Test Run", date(2026, 7, 15))
     fetched = service.get_run(run.id)
     assert fetched.name == "Test Run"
     assert fetched.status.value == "created"
-    assert fetched.reference_date == date(2025, 6, 15)
+    assert fetched.reference_date == date(2026, 7, 15)
 
 
 def test_upload_process_decide_export(
     service: WorkbenchService,
     fixtures_dir: Path,
 ):
-    run = service.create_run("Fixture Run", date(2025, 6, 15))
+    run = service.create_run("Fixture Run", date(2026, 7, 15))
     content = (fixtures_dir / "messy_construction_records.csv").read_bytes()
     run = service.upload_csv(run.id, "messy_construction_records.csv", content)
     assert run.mappings
@@ -169,7 +169,7 @@ def test_upload_process_decide_export(
 
 
 def test_export_refuses_pending(service: WorkbenchService, fixtures_dir: Path):
-    run = service.create_run("Pending Run", date(2025, 6, 15))
+    run = service.create_run("Pending Run", date(2026, 7, 15))
     content = (fixtures_dir / "messy_construction_records.csv").read_bytes()
     run = service.upload_csv(run.id, "messy.csv", content)
     for m in run.mappings or []:
@@ -182,7 +182,7 @@ def test_export_refuses_pending(service: WorkbenchService, fixtures_dir: Path):
 
 
 def test_override_requires_reason(service: WorkbenchService, fixtures_dir: Path):
-    run = service.create_run("Override Run", date(2025, 6, 15))
+    run = service.create_run("Override Run", date(2026, 7, 15))
     content = (fixtures_dir / "messy_construction_records.csv").read_bytes()
     run = service.upload_csv(run.id, "messy.csv", content)
     for m in run.mappings or []:
@@ -204,7 +204,7 @@ def test_override_requires_reason(service: WorkbenchService, fixtures_dir: Path)
 
 
 def test_delete_run_removes_artifacts(service: WorkbenchService, fixtures_dir: Path):
-    run = service.create_run("Delete Run", date(2025, 6, 15))
+    run = service.create_run("Delete Run", date(2026, 7, 15))
     content = (fixtures_dir / "messy_construction_records.csv").read_bytes()
     service.upload_csv(run.id, "messy.csv", content)
     upload_dir = Path(service.settings.upload_path) / run.id
@@ -218,7 +218,7 @@ def test_rerun_stable_ids(service: WorkbenchService, fixtures_dir: Path):
     content = (fixtures_dir / "messy_construction_records.csv").read_bytes()
 
     def run_once() -> set[str]:
-        run = service.create_run("ID Run", date(2025, 6, 15))
+        run = service.create_run("ID Run", date(2026, 7, 15))
         run = service.upload_csv(run.id, "messy.csv", content)
         for m in run.mappings or []:
             m.confirmed = True

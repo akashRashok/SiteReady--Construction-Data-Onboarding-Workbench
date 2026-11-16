@@ -69,17 +69,17 @@ export function TopBar({ health, run, onOpenSettings }: TopBarProps) {
 
 interface SideNavProps {
   step: Step;
-  steps: { id: Step; label: string; short: string }[];
+  workflowSteps: { id: Step; label: string; short: string }[];
   reachable: (target: Step) => boolean;
   onNavigate: (step: Step) => void;
 }
 
-export function SideNav({ step, steps, reachable, onNavigate }: SideNavProps) {
+export function SideNav({ step, workflowSteps, reachable, onNavigate }: SideNavProps) {
   return (
-    <aside className="sidenav" aria-label="Workflow">
+    <aside className="sidenav" aria-label="Navigation">
       <div className="sidenav-section-label">Workflow</div>
-      <nav className="sidenav-nav">
-        {steps.map((s, index) => {
+      <nav className="sidenav-nav" aria-label="Workflow">
+        {workflowSteps.map((s, index) => {
           const active = step === s.id;
           const enabled = reachable(s.id);
           return (
@@ -96,6 +96,18 @@ export function SideNav({ step, steps, reachable, onNavigate }: SideNavProps) {
           );
         })}
       </nav>
+
+      <div className="sidenav-section-label sidenav-section-secondary">Secondary</div>
+      <nav className="sidenav-nav" aria-label="Secondary">
+        <button
+          type="button"
+          className={`sidenav-item sidenav-item-secondary ${step === "swms" ? "active" : ""}`}
+          onClick={() => onNavigate("swms")}
+        >
+          <span className="sidenav-label">SWMS</span>
+        </button>
+      </nav>
+
       <div className="sidenav-footer">
         <div className="sidenav-footer-title">Disclaimer</div>
         <p>Independent demo. Synthetic data. Not affiliated with any commercial product.</p>

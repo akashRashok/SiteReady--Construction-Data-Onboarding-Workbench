@@ -8,10 +8,11 @@ import { MappingScreen } from "./screens/MappingScreen";
 import { ReviewScreen } from "./screens/ReviewScreen";
 import { ExportScreen } from "./screens/ExportScreen";
 import { AuditScreen } from "./screens/AuditScreen";
+import { SwmsScreen } from "./screens/SwmsScreen.tsx";
 
-export type Step = "upload" | "mapping" | "review" | "export" | "audit";
+export type Step = "upload" | "mapping" | "review" | "export" | "audit" | "swms";
 
-const STEPS: { id: Step; label: string; short: string }[] = [
+const WORKFLOW_STEPS: { id: Step; label: string; short: string }[] = [
   { id: "upload", label: "Upload", short: "Upload" },
   { id: "mapping", label: "Mapping", short: "Mapping" },
   { id: "review", label: "Review", short: "Review" },
@@ -25,10 +26,11 @@ const PAGE_COPY: Record<Step, { title: string; crumb: string }> = {
   review: { title: "Review entities", crumb: "Review" },
   export: { title: "Export artifacts", crumb: "Export" },
   audit: { title: "Audit trail", crumb: "Audit" },
+  swms: { title: "SWMS extraction", crumb: "SWMS" },
 };
 
-function stepIndex(step: Step): number {
-  return STEPS.findIndex((s) => s.id === step);
+function workflowIndex(step: Step): number {
+  return WORKFLOW_STEPS.findIndex((s) => s.id === step);
 }
 
 export function App() {
@@ -46,8 +48,10 @@ export function App() {
   }, []);
 
   const reachable = (target: Step): boolean => {
+    if (target === "swms") return true;
     if (!run) return target === "upload";
-    const idx = stepIndex(target);
+    const idx = workflowIndex(target);
+    if (idx < 0) return false;
     const order: Record<ImportRun["status"], number> = {
       created: 0,
       ingested: 1,
@@ -62,6 +66,7 @@ export function App() {
   };
 
   const page = PAGE_COPY[step];
+  const showRunCrumb = Boolean(run) && step !== "swms";
 
   return (
     <div className="app-shell">
@@ -73,7 +78,7 @@ export function App() {
       <div className="shell-body">
         <SideNav
           step={step}
-          steps={STEPS}
+          workflowSteps={WORKFLOW_STEPS}
           reachable={reachable}
           onNavigate={setStep}
         />
@@ -83,10 +88,10 @@ export function App() {
               <span>Onboarding Workbench</span>
               <span className="crumb-sep">/</span>
               <span>{page.crumb}</span>
-              {run && (
+              {showRunCrumb && (
                 <>
                   <span className="crumb-sep">/</span>
-                  <span className="crumb-current">{run.name}</span>
+                  <span className="crumb-current">{run!.name}</span>
                 </>
               )}
             </div>
@@ -128,6 +133,7 @@ export function App() {
               />
             )}
             {step === "audit" && run && <AuditScreen run={run} />}
+            {step === "swms" && <SwmsScreen />}
           </main>
         </div>
       </div>

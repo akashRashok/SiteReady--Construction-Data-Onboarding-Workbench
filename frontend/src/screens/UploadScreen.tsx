@@ -9,8 +9,8 @@ interface UploadScreenProps {
 }
 
 export function UploadScreen({ run, onRunReady, onSelectRun }: UploadScreenProps) {
-  const [name, setName] = useState("Construction onboarding demo");
-  const [referenceDate, setReferenceDate] = useState("2025-06-15");
+  const [name, setName] = useState("");
+  const [referenceDate, setReferenceDate] = useState("2026-07-15");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [runs, setRuns] = useState<ImportRun[]>([]);
@@ -24,6 +24,15 @@ export function UploadScreen({ run, onRunReady, onSelectRun }: UploadScreenProps
 
   const handleUpload = async () => {
     setError(null);
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setError("Enter a run name.");
+      return;
+    }
+    if (!referenceDate) {
+      setError("Choose a reference date.");
+      return;
+    }
     const file = fileRef.current?.files?.[0];
     if (!file) {
       setError("Select a CSV file to upload.");
@@ -31,7 +40,7 @@ export function UploadScreen({ run, onRunReady, onSelectRun }: UploadScreenProps
     }
     setBusy(true);
     try {
-      const created = run ?? (await api.createRun(name, referenceDate));
+      const created = run ?? (await api.createRun(trimmedName, referenceDate));
       const updated = await api.uploadCsv(created.id, file);
       onRunReady(updated);
     } catch (e) {

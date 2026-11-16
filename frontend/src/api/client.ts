@@ -53,6 +53,50 @@ export interface LlmSettings {
   notice: string;
 }
 
+export interface SwmsEvidence {
+  value: string | string[] | Record<string, string>[] | null;
+  source_text: string;
+  page?: number | null;
+  validation_error?: string;
+  raw_value?: string;
+}
+
+export interface SwmsJobStep {
+  step: string;
+  hazard: string;
+  risk_rating: string;
+  control_measures: string;
+}
+
+export interface SwmsFields {
+  swms_number?: string | null;
+  document_title?: string | null;
+  contractor_name?: string | null;
+  contractor_abn?: string | null;
+  project_name?: string | null;
+  site_address?: string | null;
+  activity?: string | null;
+  date_prepared?: string | null;
+  review_date?: string | null;
+  responsible_person?: string | null;
+  high_risk_categories?: string[];
+  ppe_required?: string[];
+  plant_and_equipment?: string[];
+  required_competencies_licences?: string[];
+  job_steps?: SwmsJobStep[];
+  [key: string]: string | string[] | SwmsJobStep[] | null | undefined;
+}
+
+export interface SwmsExtractResult {
+  disclaimer: string;
+  source_file: string;
+  fields: SwmsFields;
+  evidence: Record<string, SwmsEvidence>;
+  llm_used: boolean;
+  artifact_path?: string;
+  warning?: string;
+}
+
 export const api = {
   health: () => request<HealthInfo>("/health"),
 
@@ -144,4 +188,13 @@ export const api = {
 
   artifactUrl: (id: string, name: string) =>
     `${BASE}/runs/${id}/artifacts/${name}`,
+
+  extractSwms: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return request<SwmsExtractResult>("/swms/extract", {
+      method: "POST",
+      body: form,
+    });
+  },
 };

@@ -20,6 +20,7 @@ from app.models import (
     IssueRecord,
     Severity,
 )
+from app.llm.grounding import check_grounded
 from app.pipeline.export import is_import_ready
 
 HOSTED_PROVIDERS = frozenset({"openai", "anthropic", "gemini"})
@@ -61,6 +62,12 @@ class LLMAdapter(Protocol):
     ) -> dict[str, Any]: ...
 
 
+_EXPORT_NOTE = (
+    "This tool only exports files for the customer to import. "
+    "Nothing has been imported into any target system."
+)
+
+
 def _counts_payload(
     run: ImportRun,
     entities: list[EntityRecord],
@@ -79,6 +86,7 @@ def _counts_payload(
         "warnings": sum(1 for i in issues if i.severity == Severity.WARNING),
         "decisions": len(decisions),
         "issue_counts_by_rule": _rule_counts(issues),
+        "note": _EXPORT_NOTE,
     }
 
 
@@ -187,6 +195,24 @@ class ChatAdapterBase:
     def _chat_json(self, system: str, user: str) -> dict[str, Any] | None:
         raise NotImplementedError
 
+    def _grounded_text(self, system: str, payload: dict[str, Any]) -> str | None:
+        """Draft text, reject it if it is not grounded in the payload, retry once, else None."""
+        user = json.dumps(payload)
+        text = self._chat_text(system, user)
+        if not text:
+            return None
+        problems = check_grounded(text, payload)
+        if not problems:
+            return text
+        retry = self._chat_text(
+            system,
+            f"{user}\n\nYour previous draft was rejected: {'; '.join(problems)}. "
+            "Rewrite it using only the input.",
+        )
+        if retry and not check_grounded(retry, payload):
+            return retry
+        return None
+
     def draft_implementation_summary(
         self,
         run: ImportRun,
@@ -197,10 +223,12 @@ class ChatAdapterBase:
         payload = _counts_payload(run, entities, issues, decisions)
         system = (
             "You draft a short customer-facing implementation summary. "
-            "Use ONLY the numbers provided. Never invent figures. "
+            "Use ONLY the numbers provided and do not add, sum or derive any figure. "
+            "Do not say records were imported, migrated or successful, do not praise the "
+            "result, and do not state dates other than the reference date. "
             "Return plain Markdown. Mention Independent demo. Synthetic data."
         )
-        text = self._chat_text(system, json.dumps(payload))
+        text = self._grounded_text(system, payload)
         if not text:
             return deterministic_implementation_summary(payload, self.provider, self.model)
         if "Independent demo" not in text:
@@ -218,12 +246,15 @@ class ChatAdapterBase:
             "issue_counts_by_rule": _rule_counts(issues),
             "errors": sum(1 for i in issues if i.severity == Severity.ERROR),
             "warnings": sum(1 for i in issues if i.severity == Severity.WARNING),
+            "severity_by_rule": {i.rule_id: i.severity.value for i in issues},
         }
         system = (
             "Summarise the exception categories in plain English. "
-            "Do not invent counts; use only provided counts."
+            "Use only the provided counts and do not add or derive any figure. "
+            "Rules with severity info are routine transformations, not problems. "
+            "Do not praise or comment on the result."
         )
-        text = self._chat_text(system, json.dumps(payload))
+        text = self._grounded_text(system, payload)
         if not text:
             return deterministic_exception_narrative(payload, self.provider, self.model)
         return text

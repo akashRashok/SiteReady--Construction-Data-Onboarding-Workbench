@@ -405,7 +405,7 @@ textarea {
 }
 
 .sidenav-section-label {
-  padding: 12px 20px 6px;
+  padding: 12px 16px 6px 20px;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.06em;
@@ -417,63 +417,164 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 0 8px;
+  padding: 0 12px 0 0;
 }
 
-.sidenav-item {
+/* Must beat global `button { justify-content: center; … }` so step numbers share one column */
+button.sidenav-item {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 12px;
-  width: 100%;
-  padding: 8px 12px;
+  box-sizing: border-box;
+  width: auto;
+  align-self: stretch;
+  min-height: 36px;
+  margin: 0;
+  padding: 8px 12px 8px 20px;
   border: none;
   border-radius: 0 20px 20px 0;
-  margin-right: 8px;
   background: transparent;
   color: var(--text);
+  font: inherit;
   font-size: 13px;
   font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: normal;
   text-align: left;
+  white-space: nowrap;
   cursor: pointer;
+  appearance: none;
 }
 
-.sidenav-item:hover:not(:disabled) {
+button.sidenav-item:hover:not(:disabled) {
   background: var(--bg-hover);
+  color: var(--text);
 }
 
-.sidenav-item.active {
+button.sidenav-item.active {
   background: var(--gcp-blue-light);
   color: var(--gcp-blue);
 }
 
-.sidenav-item:disabled {
+button.sidenav-item:disabled {
   color: var(--text-disabled);
   cursor: not-allowed;
+  background: transparent;
 }
 
 .sidenav-index {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   width: 20px;
+  min-width: 20px;
   height: 20px;
   border-radius: 50%;
   font-size: 11px;
   font-weight: 500;
+  line-height: 1;
   background: var(--bg-hover);
   color: var(--text-secondary);
   flex-shrink: 0;
 }
 
-.sidenav-item.active .sidenav-index {
+button.sidenav-item.active .sidenav-index {
   background: var(--gcp-blue);
   color: #fff;
+}
+
+.sidenav-label {
+  min-width: 0;
+}
+
+.sidenav-section-secondary {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+button.sidenav-item-secondary {
+  padding-left: 20px;
 }
 
 .sidenav-footer {
   margin-top: auto;
   padding: 16px 20px 8px;
   border-top: 1px solid var(--border);
+}
+
+/* ── SWMS secondary screen ─────────────────────────────── */
+
+.swms-field-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+
+.swms-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.swms-field-row:last-child {
+  border-bottom: none;
+}
+
+.swms-field-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.swms-field-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.swms-field-value.is-empty {
+  color: var(--text-disabled);
+  font-weight: 400;
+}
+
+.swms-evidence {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.swms-list-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0 20px 16px;
+}
+
+.swms-list-section {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+.swms-list-section h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.swms-list-section ul {
+  margin: 0 0 8px;
+  padding-left: 18px;
+}
+
+.swms-list-section .muted {
+  margin: 0 0 8px;
 }
 
 .sidenav-footer-title {
@@ -989,6 +1090,74 @@ tbody tr:last-child td {
   text-decoration: underline;
 }
 
+.export-blockers {
+  margin: 0 0 16px;
+}
+
+.export-blockers .notice {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.artifact-panel {
+  margin-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
+.artifact-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+}
+
+.artifact-status {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gcp-green);
+}
+
+.artifact-group-label {
+  padding: 8px 20px 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gcp-yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.artifact-table {
+  width: 100%;
+}
+
+.artifact-table th:nth-child(1),
+.artifact-table td:nth-child(1) {
+  width: 36%;
+}
+
+.artifact-table th:nth-child(3),
+.artifact-table td:nth-child(3) {
+  width: 88px;
+  text-align: right;
+}
+
+.artifact-file {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.artifact-desc {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.artifact-action {
+  white-space: nowrap;
+}
+
 .footer-note {
   display: none;
 }
@@ -1349,12 +1518,21 @@ tbody tr:last-child td {
     flex-direction: row;
     overflow-x: auto;
     padding: 0 8px 8px;
+    gap: 4px;
   }
 
-  .sidenav-item {
+  button.sidenav-item {
     border-radius: 16px;
-    margin-right: 0;
+    align-self: auto;
     flex-shrink: 0;
+    padding: 8px 12px;
+  }
+
+  .sidenav-section-secondary {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    display: none;
   }
 
   .sidenav-footer {
@@ -1385,6 +1563,32 @@ tbody tr:last-child td {
 
   .brand-sub {
     display: none;
+  }
+
+  .artifact-table thead {
+    display: none;
+  }
+
+  .artifact-table,
+  .artifact-table tbody,
+  .artifact-table tr,
+  .artifact-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .artifact-table tr {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .artifact-table td {
+    padding: 2px 0;
+  }
+
+  .artifact-action {
+    text-align: left;
+    padding-top: 6px !important;
   }
 
   .review-toolbar-actions {

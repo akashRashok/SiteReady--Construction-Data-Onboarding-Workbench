@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 from pathlib import Path
 
@@ -334,18 +335,53 @@ def delete_run(run_id: str):
 @router.post("/swms/extract")
 async def swms_extract(file: UploadFile = File(...)):
     content = await file.read()
-    suffix = Path(file.filename or "swms.pdf").suffix or ".pdf"
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-        tmp.write(content)
-        tmp_path = Path(tmp.name)
+    if not content:
+        return JSONResponse(status_code=400, content={"detail": "Empty PDF upload"})
+
+    original_name = Path(file.filename or "swms.pdf").name
+    suffix = Path(original_name).suffix.lower() or ".pdf"
+    if suffix != ".pdf":
+        return JSONResponse(
+            status_code=400,
+            content={"detail": "Upload a .pdf Safe Work Method Statement"},
+        )
+
+    # mkstemp + close before pdfplumber opens — reliable on Windows
+    fd, tmp_name = tempfile.mkstemp(suffix=suffix)
+    tmp_path = Path(tmp_name)
     try:
-        result = extract_swms(tmp_path)
+        with os.fdopen(fd, "wb") as tmp:
+            tmp.write(content)
+            tmp.flush()
+
+        try:
+            result = extract_swms(tmp_path)
+        except Exception as exc:  # noqa: BLE001 — surface PDF parse failures to UI
+            return JSONResponse(
+                status_code=400,
+                content={"detail": f"Could not read PDF text: {exc}"},
+            )
+
+        result["source_file"] = original_name
         settings = get_app_settings()
         out_dir = settings.output_path / "swms"
         out_dir.mkdir(parents=True, exist_ok=True)
         out_file = out_dir / "swms_extract.json"
-        out_file.write_text(json.dumps(result, indent=2), encoding="utf-8")
+        out_file.write_text(json.dumps(result, indent=2, default=str), encoding="utf-8")
         result["artifact_path"] = str(out_file)
+
+        populated = sum(
+            1
+            for key, value in result.get("fields", {}).items()
+            if key != "job_steps" and value not in (None, "", [])
+        )
+        job_steps = result.get("fields", {}).get("job_steps") or []
+        if populated == 0 and not job_steps:
+            result["warning"] = (
+                "No labelled fields found. Use a machine-readable PDF "
+                "(e.g. fixtures/SWMS_Roof_Sheeting_Working_at_Heights.pdf), "
+                "not a scanned image."
+            )
         return result
     finally:
         tmp_path.unlink(missing_ok=True)

@@ -110,14 +110,14 @@ Missing or invalid API keys fall back to deterministic templates without crashin
 
 ## Seeded demonstration
 
-1. Create a run named e.g. `Harbour demo` with reference date `2025-06-15` (keeps expiry warnings reproducible).
-2. Upload `fixtures/messy_construction_records.csv`.
+1. Create a run named e.g. `Harbour demo` with reference date `2026-07-15` (keeps expiry warnings reproducible).
+2. Upload `fixtures/messy_construction_records_28_rows.csv` (28 rows; `fixtures/messy_construction_records.csv` is the smaller 16-row file the automated tests use).
 3. Confirm column mappings (low-confidence rows must be confirmed).
 4. Review entities: exact duplicates, fuzzy candidates, raw vs normalised values, errors/warnings.
 5. Override one error with a reason, reject one company, approve the rest, resolve fuzzy pairs.
 6. Export and download import-ready / excluded CSVs, exception report, audit log, and implementation summary.
 7. Use Audit to trace an exported field back to its source row.
-8. Optional: `POST /swms/extract` with `fixtures/SWMS_Roof_Sheeting_Working_at_Heights.pdf`.
+8. Optional: open **Secondary → SWMS** in the sidenav, upload `fixtures/SWMS_Roof_Sheeting_Working_at_Heights.pdf`, review extracted fields and evidence, download `swms_extract.json` (same as `POST /swms/extract`).
 
 CSV files always begin with schema headers on row one. Disclaimers appear only in the UI, Markdown, and JSON metadata — never above a CSV header.
 

@@ -32,7 +32,7 @@ def service(tmp_path: Path, project_root: Path) -> WorkbenchService:
 
 
 def test_fixture_issue_counts(service: WorkbenchService, fixtures_dir: Path):
-    run = service.create_run("E2E", date(2025, 6, 15))
+    run = service.create_run("E2E", date(2026, 7, 15))
     content = (fixtures_dir / "messy_construction_records.csv").read_bytes()
     run = service.upload_csv(run.id, "messy_construction_records.csv", content)
     for m in run.mappings or []:
